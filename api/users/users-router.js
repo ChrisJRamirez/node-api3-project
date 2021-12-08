@@ -98,8 +98,18 @@ router.get('/:id/posts', validateUserId, (req, res) => {
   // this needs a middleware to verify user id
 });
 
-router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
+router.post('/:id/posts', validateUserId, validatePost, (req, res, next) => {
   // RETURN THE NEWLY CREATED USER POST
+  const postsInfo = {...req.body, user_id: req.params.id};
+
+  Post.insert(postsInfo)
+    .then(post => {
+      res.status(201).json(post)
+    })
+    .catch(error => {
+      next(error)
+    })
+
   // this needs a middleware to verify user id
   // and another middleware to check that the request body is valid
 });
