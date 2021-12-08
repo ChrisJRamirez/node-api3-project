@@ -61,8 +61,25 @@ router.put('/:id', validateUserId, validateUser, (req, res) => {
   // and another middleware to check that the request body is valid
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, async (req, res) => {
   // RETURN THE FRESHLY DELETED USER OBJECT
+  // the first check is redundant and does same as validateuserId - fix
+  const {id} = req.params
+  try{
+    const userTbd = await User.getById(id)
+    if(!userTbd){
+      res.status(404).json({
+        message: "The user with the specified ID does not exist"
+      })
+    }else{
+      await User.remove(id)
+      res.json(userTbd)
+    }
+  } catch(err){
+    res.status(500).json({
+      message: "The user could not be removed"
+    })
+  }
   // this needs a middleware to verify user id
 });
 
