@@ -1,7 +1,13 @@
 const User = require("../users/users-model")
 
 function logger(req, res, next) {
-  // DO YOUR MAGIC
+  const date = new Date();
+  console.log(`
+    REQUEST METHOD: ${req.method},
+    REQUEST URL: ${req.originalUrl},
+    TIMESTAMP: ${date.toLocaleString()}
+  `)
+  next()
 }
 
 const validateUserId = async(req, res, next) => {
@@ -19,11 +25,16 @@ const validateUserId = async(req, res, next) => {
     res.status(500).json({
       message:`Error:${err.message}`
     })
+    next()
   }
 }
 
 function validateUser(req, res, next) {
-  // DO YOUR MAGIC
+  if(!req.body.name){
+    res.status(400).json({message: "missing required name field"})
+  }else{
+    next()
+  }
 }
 
 function validatePost(req, res, next) {
